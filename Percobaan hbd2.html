@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buku Ucapan Ulang Tahun</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #ffdde1, #ee9ca7);
+      font-family: 'Arial', sans-serif;
+    }
+
+    .book {
+      width: 400px;
+      height: 250px;
+      position: relative;
+      perspective: 2000px;
+    }
+
+    .page {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      transform-origin: left;
+      transition: transform 1s;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      border-radius: 8px;
+      background: white;
+      overflow: hidden;
+    }
+
+    .page-content {
+      width: 100%;
+      height: 100%;
+      padding: 20px;
+      box-sizing: border-box;
+      text-align: center;
+    }
+
+    .page h2 {
+      margin: 0;
+      color: #ff6f91;
+    }
+
+    .page p {
+      font-size: 16px;
+      line-height: 1.5;
+      color: #333;
+    }
+
+    .cover {
+      background: #ff6f91;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    /* Atur posisi tumpukan halaman */
+    .page:nth-child(1) { z-index: 5; }
+    .page:nth-child(2) { z-index: 4; }
+    .page:nth-child(3) { z-index: 3; }
+    .page:nth-child(4) { z-index: 2; }
+    .page:nth-child(5) { z-index: 1; }
+
+    /* Saat halaman dibalik */
+    .flipped {
+      transform: rotateY(-180deg);
+    }
+
+    /* Tombol */
+    .controls {
+      position: absolute;
+      bottom: -60px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 15px;
+    }
+
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      background: #ff6f91;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #ff3f6c;
+    }
+
+    button:disabled {
+      background: #aaa;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="book" id="book">
+    <div class="page cover">
+      🎂 Selamat Ulang Tahun 🎂
+    </div>
+    <div class="page">
+      <div class="page-content">
+        <h2>Ucapan 1</h2>
+        <p>Semoga selalu sehat, bahagia, dan panjang umur.</p>
+      </div>
+    </div>
+    <div class="page">
+      <div class="page-content">
+        <h2>Ucapan 2</h2>
+        <p>Hari ini penuh tawa, cinta, dan doa terbaik untukmu. 🥳</p>
+      </div>
+    </div>
+    <div class="page">
+      <div class="page-content">
+        <h2>Ucapan 3</h2>
+        <p>Semoga impian-impianmu tercapai dan selalu sukses! 🌟</p>
+      </div>
+    </div>
+    <div class="page">
+      <div class="page-content">
+        <h2>🎉 The End 🎉</h2>
+        <p>Selamat merayakan ulang tahunmu dengan penuh kebahagiaan! 🎁</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button id="prevBtn" onclick="prevPage()">⬅️ Sebelumnya</button>
+    <button id="nextBtn" onclick="nextPage()">Berikutnya ➡️</button>
+  </div>
+
+  <!-- Suara kertas dibalik -->
+  <audio id="flipSound" src="https://www.soundjay.com/books/page-flip-01a.mp3" preload="auto"></audio>
+
+  <!-- Library confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <script>
+    const pages = document.querySelectorAll(".page");
+    const flipSound = document.getElementById("flipSound");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    let current = 0;
+
+    function playSound() {
+      flipSound.currentTime = 0;
+      flipSound.play();
+    }
+
+    function updateButtons() {
+      prevBtn.disabled = current === 0;
+      nextBtn.disabled = current === pages.length;
+    }
+
+    function launchConfetti() {
+      confetti({
+        particleCount: 200,
+        spread: 90,
+        origin: { y: 0.6 }
+      });
+    }
+
+    function nextPage() {
+      if (current < 4) {
+        pages[current].classList.add("flipped");
+        playSound();
+        current++;
+        updateButtons();
+
+        // 🎉 Confetti pas buka halaman pertama (dari cover ke ucapan 1)
+        if (current === 1||current === 4) {
+          setTimeout(() => {
+            launchConfetti();
+          }, 100);
+        }
+      }
+    }
+
+    function prevPage() {
+      if (current > 0) {
+        current--;
+        pages[current].classList.remove("flipped");
+        playSound();
+        updateButtons();
+      }
+    }
+
+    updateButtons();
+  </script>
+
+</body>
+</html>
